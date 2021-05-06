@@ -23,6 +23,16 @@ class BookSerializer(serializers.Serializer):
         return instance
 """
 class BookSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
     class Meta:
         model = Books
-        fields = ['id', 'title', 'authors', 'publisher', 'publication_date', 'number_of_pages']
+        fields = ['id', 'title', 'authors', 'author', 'publisher', 'publication_date', 'number_of_pages']
+
+from django.contrib.auth.models import User
+
+class AuthorSerializer(serializers.ModelSerializer):
+    books = serializers.PrimaryKeyRelatedField(many=True, queryset=Books.objects.all())
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'books']
